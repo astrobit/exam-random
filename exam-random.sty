@@ -1,0 +1,533 @@
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{exam-random}[2020/01/27 Exam multiple choice randomizer]
+\RequirePackage{tikz}
+\ProcessOptions\relax
+\usetikzlibrary{calc,math}
+
+
+% \DescribeMacro{\choicesScrambled}
+% |\choicesScrambled| Accepts up to five arguments.
+% The first argument must be the correct answer. 
+% The other four arguments are the remaining incorrect answers.
+% Two answers (a correct choice and an incorrect choice) are manditory, the 
+% remaining three are optional, but an empty argument will appear as an empty
+% choice.
+%
+% For example, two arguments appear as follows:
+% \begin{example}
+% \question Is the sky blue?
+% \choicesScrambled{yes}{no}
+% \end{example}
+% \begin{exampleDisplay}
+% \begin{questions}
+% \question Is the sky blue?
+% \choicesScrambled{yes}{no}
+% \end{questions}
+% \end{exampleDisplay}
+% If an unnecessary, blank third choice is given, you end up with
+% \begin{example}
+% \question Is the sky blue?
+% \choicesScrambled{yes}{no}{}
+% \end{example}
+% \begin{exampleDisplay}
+% \begin{questions}
+% \question Is the sky blue?
+% \choicesScrambled{yes}{no}{}
+% \end{questions}
+% \end{exampleDisplay}
+% In essence, any argument given to |\choicesScrambled| will result in a blank
+% choice.
+%
+% The text for the choice can be complex (e.g. include graphics, etc).
+% The only limitation anything requested as verbatim will not appear correctly.
+% Instead of verbatim, use \textbackslash textsc{...}
+%
+% \DescribeMacro{\oneparchoicesScrambled}
+% |\oneparchoicesScrambled| is identical to |\choicesScrambled| but the choices
+% will appear in the stream of the text instead of as a list on several lines.
+% For example,
+% \begin{example}
+% \question How many answer choices does this question have?
+% \oneparchoicesScrambled{One}{Two}{Three}{Four}{Five}
+% \end{example}
+% \begin{exampleDisplay}
+% \begin{questions}
+% \question How many answer choices does this question have?
+% \oneparchoicesScrambled{One}{Two}{Three}{Four}{Five}
+% \end{questions}
+% \end{exampleDisplay}
+%
+% \DescribeMacro{\checkboxesScrambled}
+% |\checkboxesScrambled| is identical to |\choicesScrambled| but the choices
+% will have a checkbox in front of them instead of a letter choice.
+% For example,
+% \begin{example}
+% \question How many answer choices does this question have?
+% \checkboxesScrambled{One}{Two}{Three}{Four}{Five}
+% \end{example}
+% \begin{exampleDisplay}
+% \begin{questions}
+% \question How many answer choices does this question have?
+% \checkboxesScrambled{One}{Two}{Three}{Four}{Five}
+% \end{questions}
+% \end{exampleDisplay}
+%
+% \DescribeMacro{\oneparcheckboxesScrambled}
+% |\checkboxesScrambled| is identical to |\oneparchoicesScrambled| but the 
+% choices will have a checkbox in front of them instead of a letter choice.
+% For example,
+% \begin{example}
+% \question How many answer choices does this question have?
+% \oneparcheckboxesScrambled{One}{Two}{Three}{Four}{Five}
+% \end{example}
+% \begin{exampleDisplay}
+% \begin{questions}
+% \question How many answer choices does this question have?
+% \oneparcheckboxesScrambled{One}{Two}{Three}{Four}{Five}
+% \end{questions}
+% \end{exampleDisplay}
+
+
+% \StopEventually{}
+%
+%<*package> 
+\makeatletter
+%</package> 
+%
+%<*package> 
+% 
+% \section{Implementation}
+% 
+% \subsection{Special environments and macros}
+%
+% To accomodate instances when users don't wish to use the exam class, these
+% environments and macros are set up to allow use of the scramble choices
+% macros seamlessly.
+\@ifclassloaded{exam}{\def\er@c@exam{1} \def\here{here}}{\def\er@c@noexam{1} \def\here{no here}}
+
+\ifx\er@c@noexam\undefined
+%    \end{macrocode}
+% Definitions for when the user is using the exam class.
+%    \begin{macrocode}
+\newenvironment{EReChoices}%
+{\begin{choices}}%
+{\end{choices}}
+\newenvironment{EReOneparchoices}%
+{\begin{oneparchoices}}%
+{\end{oneparchoices}}
+\newenvironment{EReCheckboxes}%
+{\begin{checkboxes}}%
+{\end{checkboxes}}
+\newenvironment{EReOneparcheckboxes}%
+{\begin{oneparcheckboxes}}%
+{\end{oneparcheckboxes}}
+\DeclareRobustCommand{\er@choice}{\choice}
+\DeclareRobustCommand{\er@CorrectChoice}{\CorrectChoice}
+\else
+%
+%    \end{macrocode}
+% Definitions for when the user is NOT using the exam class.
+%    \begin{macrocode}
+\RequirePackage{amssymb}
+\RequirePackage{enumitem}
+\newenvironment{EReChoices}%
+%    \end{macrocode}
+% When not in the exam class, for the choices environment, use the enumerate
+%  environment with the labels set as A., B., etc.
+%    \begin{macrocode}
+	{\begin{enumerate}[label=\Alph*.]}%
+	{\end{enumerate}}
+\newenvironment{EReOneparchoices}%
+%    \end{macrocode}
+% When not in the exam class, for the oneparchoices environment, use the 
+% enumerate* environment with the labels set as A., B., etc.
+%    \begin{macrocode}
+	{\begin{enumerate*}[label=\Alph*.]}%
+	{\end{enumerate*}}
+\newenvironment{EReCheckboxes}%
+%    \end{macrocode}
+% When not in the exam class, for the checkboxes environment, use the enumerate
+%  environment with the labels set as $\square$ (\$ \textbackslash square \$).
+%    \begin{macrocode}
+	{\begin{enumerate}[label=$\square$]}%
+	{\end{enumerate}}
+%    \end{macrocode}
+% When not in the exam class, for the oneparchoices environment, use the 
+% enumerate* environment with the labels set as A., B., etc.
+%    \begin{macrocode}
+\newenvironment{EReOneparcheckboxes}%
+	{\begin{enumerate*}[label=$\square$]}%
+	{\end{enumerate*}}
+%    \end{macrocode}
+% When not in the exam class, choices just use \item
+%    \begin{macrocode}
+\DeclareRobustCommand{\er@choice}{\item}
+\DeclareRobustCommand{\er@CorrectChoice}{\item}
+\fi
+%    \end{macrocode}
+%</package> 
+
+%
+% \subsection{The worker}
+%
+% The worker |\er@ScrambledChoicesWorker| does the actual work of scrambling
+% the answers.
+%<*package>
+%\begin{macro}{\er@getEanswer}
+%    \begin{macrocode}
+\newcommand{\er@ScrambledChoicesWorker}[5]{ {%
+% Here we create macros for each choice. 
+% These will be scrambled in the later sections.
+%    \begin{macrocode}
+\newcommand{\er@cAA}{\er@CorrectChoice #1}
+\newcommand{\er@cAB}{\er@choice #2}
+\newcommand{\er@cAC}{\er@choice #3}
+\newcommand{\er@cAD}{\er@choice #4}
+\newcommand{\er@cAE}{\er@choice #5}
+%    \end{macrocode}
+% Define some tikz variables for facrotial digits.
+% These will be used to do the scrambling
+%    \begin{macrocode}
+\tikzmath{
+		integer \firstChoice;
+		integer \secondChoice;
+		integer \thirdChoice;
+		integer \fourthChoice;
+		\firstChoice = 0;
+		\secondChoice = 0;
+		\thirdChoice = 0;
+		\fourthChoice = 0;
+}
+%    \end{macrocode}
+% Generate a random number. The range is dependent upon how many choices there
+% are. We then will fill in the factorial digits based on the random number
+% to do the scrambling.
+%    \begin{macrocode}
+\if\relax\detokenize{#3}\relax
+	\tikzmath{
+%    \end{macrocode}
+% Only two choices. Random integer from 0-1.
+%    \begin{macrocode}
+		\variant=floor(rand + 1.0);
+		\firstChoice = round(floor(mod(\variant,2.0)));
+	}
+\else
+\if\relax\detokenize{#4}\relax
+%    \end{macrocode}
+% Three choices: random integer from 0-5.
+%    \begin{macrocode}
+	\tikzmath{
+		\variant=floor((rand + 1.0) * 3.0);
+		\firstChoice = round(floor(\variant / 2.0));
+		\secondChoice = round(floor(mod(\variant,2.0)));
+	}
+\else
+\if\relax\detokenize{#5}\relax
+%    \end{macrocode}
+% Four choices: random integer from 0-23.
+%    \begin{macrocode}
+	\tikzmath{
+		\variant=floor((rand + 1.0) * 12.0);
+		\firstChoice = round(floor(\variant / 6.0)));
+		\secondChoice = round(floor(mod(\variant,6.0) / 2.0));
+		\thirdChoice = round(floor(mod(\variant,2.0)));
+	}
+\else
+%    \end{macrocode}
+% Five choices: random integer from 0-120.
+%    \begin{macrocode}
+	\tikzmath{
+		\variant=floor((rand + 1.0) * 60.0);
+		\firstChoice = round(floor(\variant / 24.0)));
+		\secondChoice = round(floor(mod(\variant,24.0) / 6.0));
+		\thirdChoice = round(floor(mod(\variant,6.0) / 2.0));
+		\fourthChoice = round(floor(mod(\variant,2.0)));
+	}
+\fi \fi \fi
+%    \end{macrocode}
+% The first factorial digit identifies which swap to do. This swap results
+% in the first choice and one other choice swapping places.
+%    \begin{macrocode}
+	\ifcase \firstChoice
+%    \end{macrocode}
+% Swap A $\leftrightarrow$ A
+%    \begin{macrocode}
+		\newcommand{\er@cBA}{\er@cAA}
+		\newcommand{\er@cBB}{\er@cAB}
+		\newcommand{\er@cBC}{\er@cAC}
+		\newcommand{\er@cBD}{\er@cAD}
+		\newcommand{\er@cBE}{\er@cAE}
+	\or
+%    \end{macrocode}
+% Swap A $\leftrightarrow$ B
+%    \begin{macrocode}
+		\newcommand{\er@cBA}{\er@cAB}
+		\newcommand{\er@cBB}{\er@cAA}
+		\newcommand{\er@cBC}{\er@cAC}
+		\newcommand{\er@cBD}{\er@cAD}
+		\newcommand{\er@cBE}{\er@cAE}
+	\or
+%    \end{macrocode}
+% Swap A $\leftrightarrow$ C
+%    \begin{macrocode}
+		\newcommand{\er@cBA}{\er@cAC}
+		\newcommand{\er@cBB}{\er@cAB}
+		\newcommand{\er@cBC}{\er@cAA}
+		\newcommand{\er@cBD}{\er@cAD}
+		\newcommand{\er@cBE}{\er@cAE}
+	\or
+%    \end{macrocode}
+% Swap A $\leftrightarrow$ D
+%    \begin{macrocode}
+		\newcommand{\er@cBA}{\er@cAD}
+		\newcommand{\er@cBB}{\er@cAB}
+		\newcommand{\er@cBC}{\er@cAC}
+		\newcommand{\er@cBD}{\er@cAA}
+		\newcommand{\er@cBE}{\er@cAE}
+	\else
+%    \end{macrocode}
+% Swap A $\leftrightarrow$ E
+%    \begin{macrocode}
+		\newcommand{\er@cBA}{\er@cAE}
+		\newcommand{\er@cBB}{\er@cAB}
+		\newcommand{\er@cBC}{\er@cAC}
+		\newcommand{\er@cBD}{\er@cAD}
+		\newcommand{\er@cBE}{\er@cAA}
+	\fi
+%    \end{macrocode}
+% The second factorial digit identifies the next swap to do. This swap results
+% in the second choice and one later choice swapping places.
+%    \begin{macrocode}
+	\ifcase\secondChoice
+%    \end{macrocode}
+% Swap B $\leftrightarrow$ B
+%    \begin{macrocode}
+		\newcommand{\er@cCA}{\er@cBA}
+		\newcommand{\er@cCB}{\er@cBB}
+		\newcommand{\er@cCC}{\er@cBC}
+		\newcommand{\er@cCD}{\er@cBD}
+		\newcommand{\er@cCE}{\er@cBE}
+	\or
+%    \end{macrocode}
+% Swap B $\leftrightarrow$ C
+%    \begin{macrocode}
+		\newcommand{\er@cCA}{\er@cBA}
+		\newcommand{\er@cCB}{\er@cBC}
+		\newcommand{\er@cCC}{\er@cBB}
+		\newcommand{\er@cCD}{\er@cBD}
+		\newcommand{\er@cCE}{\er@cBE}
+	\or
+%    \end{macrocode}
+% Swap B $\leftrightarrow$ D
+%    \begin{macrocode}
+		\newcommand{\er@cCA}{\er@cBA}
+		\newcommand{\er@cCB}{\er@cBD}
+		\newcommand{\er@cCC}{\er@cBC}
+		\newcommand{\er@cCD}{\er@cBB}
+		\newcommand{\er@cCE}{\er@cBE}
+	\else
+%    \end{macrocode}
+% Swap B $\leftrightarrow$ E
+%    \begin{macrocode}
+		\newcommand{\er@cCA}{\er@cBA}
+		\newcommand{\er@cCB}{\er@cBE}
+		\newcommand{\er@cCC}{\er@cBC}
+		\newcommand{\er@cCD}{\er@cBD}
+		\newcommand{\er@cCE}{\er@cBB}
+	\fi
+%    \end{macrocode}
+% The third factorial digit identifies the next swap to do. This swap results
+% in the third choice and one later choice swapping places.
+%    \begin{macrocode}
+	\ifcase\thirdChoice
+%    \end{macrocode}
+% Swap C $\leftrightarrow$ C
+%    \begin{macrocode}
+		\newcommand{\er@cDA}{\er@cCA}
+		\newcommand{\er@cDB}{\er@cCB}
+		\newcommand{\er@cDC}{\er@cCC}
+		\newcommand{\er@cDD}{\er@cCD}
+		\newcommand{\er@cDE}{\er@cCE}
+	\or
+%    \end{macrocode}
+% Swap C $\leftrightarrow$ D
+%    \begin{macrocode}
+		\newcommand{\er@cDA}{\er@cCA}
+		\newcommand{\er@cDB}{\er@cCB}
+		\newcommand{\er@cDC}{\er@cCD}
+		\newcommand{\er@cDD}{\er@cCC}
+		\newcommand{\er@cDE}{\er@cCE}
+	\else
+%    \end{macrocode}
+% Swap C $\leftrightarrow$ E
+%    \begin{macrocode}
+		\newcommand{\er@cDA}{\er@cCA}
+		\newcommand{\er@cDB}{\er@cCB}
+		\newcommand{\er@cDC}{\er@cCE}
+		\newcommand{\er@cDD}{\er@cCD}
+		\newcommand{\er@cDE}{\er@cCC}
+	\fi
+	\ifcase\fourthChoice
+%    \end{macrocode}
+% Swap D $\leftrightarrow$ D
+%    \begin{macrocode}
+		\newcommand{\er@cEA}{\er@cDA}
+		\newcommand{\er@cEB}{\er@cDB}
+		\newcommand{\er@cEC}{\er@cDC}
+		\newcommand{\er@cED}{\er@cDD}
+		\newcommand{\er@cEE}{\er@cDE}
+	\else
+%    \end{macrocode}
+% Swap D $\leftrightarrow$ E
+%    \begin{macrocode}
+		\newcommand{\er@cEA}{\er@cDA}
+		\newcommand{\er@cEB}{\er@cDB}
+		\newcommand{\er@cEC}{\er@cDC}
+		\newcommand{\er@cED}{\er@cDE}
+		\newcommand{\er@cEE}{\er@cDD}
+	\fi
+%    \end{macrocode}
+% Actually generate the choices based on the above swaps.
+% Only display choices that exist.
+%    \begin{macrocode}
+	\begin{\er@e@choiceEnvType}
+		\er@cEA
+		\er@cEB
+	\if\relax\detokenize{#3}\relax
+		\relax
+	\else
+		\er@cEC
+		\if\relax\detokenize{#4}\relax
+			\relax
+		\else
+			\er@cED
+			\if\relax\detokenize{#5}\relax
+				\relax
+			\else
+				\er@cEE
+			\fi
+		\fi
+	\fi
+	\end{\er@e@choiceEnvType}
+	}
+}
+%    \end{macrocode}
+% \end{macro}
+%</package>
+%
+%<*package>
+%\begin{macro}{\er@getEanswer}
+% The |\er@getEanswer| macro gobbles up a fifth answer choice and calls the
+% scrambled choices worker.
+%    \begin{macrocode}
+\newcommand{\er@getEanswer}[1]{\newcommand{\er@ChoiceE}{#1}%
+ \er@ScrambledChoicesWorker{\er@Answer}{\er@ChoiceB}{\er@ChoiceC}{\er@ChoiceD}{\er@ChoiceE}}
+%    \end{macrocode}
+% \end{macro}
+%</package>
+%
+%<*package>
+%\begin{macro}{\er@getDanswer}
+% The |\er@getDanswer| macro gobbles up a fourth answer choice and checks to see
+% if a fifth answer is provided. If not, it calls the scrambled choice worker
+% with the four answers.
+%    \begin{macrocode}
+\newcommand{\er@getDanswer}[1]{\newcommand{\er@ChoiceD}{#1}%
+ \@ifnextchar\bgroup{ \er@getEanswer}{%
+ \er@ScrambledChoicesWorker{\er@Answer}{\er@ChoiceB}{\er@ChoiceC}{\er@ChoiceD}{}}}
+%    \end{macrocode}
+% \end{macro}
+%</package>
+%
+%<*package>
+%\begin{macro}{\er@getCanswer}
+% The |\er@getCanswer| macro gobbles up a third answer choice and checks to see
+% if a fourth answer is provided. If not, it calls the scrambled choice worker
+% with the three answers.
+%    \begin{macrocode}
+\newcommand{\er@getCanswer}[1]{\newcommand{\er@ChoiceC}{#1}%
+ \@ifnextchar\bgroup{ \er@getDanswer}{ %
+\er@ScrambledChoicesWorker{\er@Answer}{\er@ChoiceB}{\er@ChoiceC}{}{}}}
+%    \end{macrocode}
+% \end{macro}
+%</package>
+%
+%<*package>
+%\begin{macro}{\choicesScrambled}
+% The |\choicesScrambled| macro is the main macro for users. It can be called
+% with two or more answers. If more than two is provided, |\er@getCanswer| will
+% be invoked to gobble up the additional answers. If not, 
+% |\er@ScrambledChoicesWorker| is called with the two answers provided.
+%    \begin{macrocode}
+\newcommand{\choicesScrambled}[2]{%
+		\newcommand{\er@e@choiceEnvType}{EReChoices}%
+		\newcommand{\er@Answer}{#1}%
+		\newcommand{\er@ChoiceB}{#2}%
+		\@ifnextchar\bgroup{\er@getCanswer}{%
+\er@ScrambledChoicesWorker{\er@Answer}{\er@ChoiceB}{}{}{}}
+}
+%    \end{macrocode}
+% \end{macro}
+%</package>
+%
+
+%<*package>
+%\begin{macro}{\checkboxesScrambled}
+% The |\checkboxesScrambled| macro is identical to the |\choicesScrambled| 
+% macro, except that is dispays checkboxes instead of letters for the choices.
+%    \begin{macrocode}
+\newcommand{\checkboxesScrambled}[2]{%
+		\newcommand{\er@e@choiceEnvType}{EReCheckboxes}%
+		\newcommand{\er@Answer}{#1}%
+		\newcommand{\er@ChoiceB}{#2}%
+		\@ifnextchar\bgroup{\er@getCanswer}{%
+\er@ScrambledChoicesWorker{\er@Answer}{\er@ChoiceB}{}{}{}}
+}
+%    \end{macrocode}
+% \end{macro}
+%</package>
+%
+
+%<*package>
+%\begin{macro}{\choicesScrambled}
+% The |\choicesScrambled| macro is the main macro for users. It can be called
+% with two or more answers. If more than two is provided, |\er@getCanswer| will
+% be invoked to gobble up the additional answers. If not, 
+% |\er@ScrambledChoicesWorker| is called with the two answers provided.
+%    \begin{macrocode}
+\newcommand{\oneparchoicesScrambled}[2]{%
+		\newcommand{\er@e@choiceEnvType}{EReOneparchoices}%
+		\newcommand{\er@Answer}{#1}%
+		\newcommand{\er@ChoiceB}{#2}%
+		\@ifnextchar\bgroup{\er@getCanswer}{%
+\er@ScrambledChoicesWorker{\er@Answer}{\er@ChoiceB}{}{}{}}
+}
+%    \end{macrocode}
+% \end{macro}
+%</package>
+%
+
+%<*package>
+%\begin{macro}{\oneparcheckboxesScrambled}
+% The |\oneparcheckboxesScrambled| macro is identical to the 
+% |\oneparchoicesScrambled| macro, except that is dispays checkboxes 
+% instead of letters for the choices.
+%    \begin{macrocode}
+\newcommand{\oneparcheckboxesScrambled}[2]{%
+		\newcommand{\er@e@choiceEnvType}{EReOneparcheckboxes}%
+		\newcommand{\er@Answer}{#1}%
+		\newcommand{\er@ChoiceB}{#2}%
+		\@ifnextchar\bgroup{\er@getCanswer}{%
+\er@ScrambledChoicesWorker{\er@Answer}{\er@ChoiceB}{}{}{}}
+}
+%    \end{macrocode}
+% \end{macro}
+%</package>
+%
+
+%<*package> 
+\makeatother
+%</package> 
+
+
+\endinput
