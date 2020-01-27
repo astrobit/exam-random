@@ -29,14 +29,19 @@
 %<package> \RequirePackage{tikz}
 %<package>\ProcessOptions\relax
 %<package>\usetikzlibrary{calc,math}
+%<package>\@ifclassloaded{exam}{\def\er@c@exam{1}}{\def\er@c@noexam{1}}
 %<*driver>
 \documentclass{ltxdoc}
+\usepackage{xcolor}
+\usepackage{mdframed}
 \usepackage{exam-random}
 \usepackage[backref]{hyperref}
+\usepackage{amssymb}
+\usepackage[inline]{enumitem}
 \EnableCrossrefs
 \CodelineIndex
 \RecordChanges
-%\OnlyDescription
+\OnlyDescription
 \begin{document}
 \DocInput{exam-random.dtx}
 \PrintChanges
@@ -45,7 +50,7 @@
 %</driver>
 % \fi
 %
-% \CheckSum{}
+% \CheckSum{0}
 %
 % \CharacterTable
 %  {Upper-case    \A\B\C\D\E\F\G\H\I\J\K\L\M\N\O\P\Q\R\S\T\U\V\W\X\Y\Z
@@ -70,7 +75,11 @@
 % \DeclareRobustCommand{\filedate}{2020/01/26}
 %
 % \DoNotIndex{\DeclareRobustCommand,\newenvironment,\DeclareRobustCommand,
-%  \left,\right,\textbf,\mathrm,\ensuremath,\units@separator,\expandafter,\,}
+%  \left,\right,\textbf,\mathrm,\ensuremath,\units@separator,\expandafter,\,
+%  \@ifnextchar, \Alph, \begin, \bgroup, \choice, \CorrectChoice, \detokenize,
+%  \else, \end, \fi, \if, \ifcase, \ifx, \item, \newcommand, \or, \relax, 
+%  \RequirePackage, \square, \specialenvironments, \tikzmath, \undefined}
+%  
 %
 % \title{The \textsf{exam-random} package\thanks{This document corresponds to%
 %  \textsf{exam-random}~\fileversion, dated \filedate.}}
@@ -80,16 +89,61 @@
 % \setlength{\parindent}{0em}
 % \setlength{\parskip}{1em}
 %
+% \newenvironment{example}{\begin{mdframed}[backgroundcolor=orange!25]%
+%    \small\texttt}{\end{mdframed}}
+% \newenvironment{exampleDisplay}{\begin{mdframed}[backgroundcolor=blue!25]}%
+%    {\end{mdframed}}
+% \newenvironment{questions}{\begin{enumerate}}{\end{enumerate}}
+% \newenvironment{choices}{\begin{enumerate}[label=\Alph*.]}{\end{enumerate}}
+% \newenvironment{oneparchoices}{\begin{enumerate}[label=\Alph*.]}{\end{enumerate}}
+% \newenvironment{checkboxes}{\begin{enumerate}[label=$\square$]}{\end{enumerate}}
+% \newenvironment{oneparcheckboxes}{\begin{enumerate}[label=$\square$]}{\end{enumerate}}
+% \DeclareRobustCommand{\question}{\item}
+% \DeclareRobustCommand{\choice}{\item}
+% \DeclareRobustCommand{\CorrectChoice}{\item}
+
+%
 % \section{Introduction}
 %
 %
-% This package consists of several macros that are shorthand for a variety of
-% physical units that are commonly used in introductory level physics and 
-% astronomy classes. 
+% This package consists of several macros that can scramble the answer choices
+% for multiple choice questions.
+% It is intended for use with the |exam| class, but may also be used
+% stand-alone. When used stand-along, the |amssymb| and |enumitem| packages
+% are required.
 %
-
-
-
+% \section{Randomization}
+%
+% To scramble the choices, pseudo random numbers are used, generated via the
+% |tikz| function |rand|. If you run latex multiple times to get labels to
+% cross reference, each time you run it a new random seed may be used, leading
+% to the questions changing order in a way that you don't want them to.
+%
+% To prevent this, you should use an explicity defined random seed. This can
+% also make sure that the order of the answers appears the same in the solution
+% and the exam itself (assuming you are using the |exam| class with the 
+% |[answers]| option.
+%
+% To specify the random seed, at the top of your file add
+% |\pgfmathsetseed\{<#>}| (where 
+% $\langle$\#$\rangle$ is an integer supplied by you).
+%
+%
+% \section{Warning about braces}
+%
+% The macros used to generate the random choices accept a varying number of
+% arguments, and use some tricky \LaTeX code internally to figure out how
+% many arguments there are. They do this by looking for a \{ as the first 
+% character after a previous answer choice. If it finds one, it will
+% process it as an answer choice, up to the fifth answer choice. This can lead
+% to unexpected behavior if you enclose some code in a scope.
+% 
+% To avoid this, just make sure that any text immediately after the
+% choices does not begin a new scope, or if it does there is a empty line
+% after the |\choicesScrambled{...}{...}...| line.
+%
+% \section{Macros}
+%
 % \DescribeMacro{\choicesScrambled}
 % |\choicesScrambled| macro takes up to five arguments that contain the
 % possible answers to a question, then prints them scrambled.
@@ -102,8 +156,8 @@
 %
 % For example, two arguments appear as follows:
 % \begin{example}
-% \question Is the sky blue?
-% \choicesScrambled{yes}{no}
+% \textbackslash question Is the sky blue?
+% \textbackslash choicesScrambled\{yes\}\{no\}
 % \end{example}
 % \begin{exampleDisplay}
 % \begin{questions}
@@ -113,8 +167,8 @@
 % \end{exampleDisplay}
 % If an unnecessary, blank third choice is given, you end up with
 % \begin{example}
-% \question Is the sky blue?
-% \choicesScrambled{yes}{no}{}
+% \textbackslash question Is the sky blue?
+% \textbackslash choicesScrambled\{yes\}\{no\}\{\}
 % \end{example}
 % \begin{exampleDisplay}
 % \begin{questions}
@@ -134,12 +188,12 @@
 % will appear in the stream of the text instead of as a list on several lines.
 % For example,
 % \begin{example}
-% \question How many answer choices does this question have?
-% \oneparchoicesScrambled{One}{Two}{Three}{Four}{Five}
+% \textbackslash question How many answer choices does this question have?\textbackslash \textbackslash \\
+% \textbackslash oneparchoicesScrambled\{One\}\{Two\}\{Three\}\{Four\}\{Five\}
 % \end{example}
 % \begin{exampleDisplay}
 % \begin{questions}
-% \question How many answer choices does this question have?
+% \question How many answer choices does this question have?\\
 % \oneparchoicesScrambled{One}{Two}{Three}{Four}{Five}
 % \end{questions}
 % \end{exampleDisplay}
@@ -149,8 +203,8 @@
 % will have a checkbox in front of them instead of a letter choice.
 % For example,
 % \begin{example}
-% \question How many answer choices does this question have?
-% \checkboxesScrambled{One}{Two}{Three}{Four}{Five}
+% \textbackslash question How many answer choices does this question have?\\
+% \textbackslash checkboxesScrambled\{One\}\{Two\}\{Three\}\{Four\}\{Five\}
 % \end{example}
 % \begin{exampleDisplay}
 % \begin{questions}
@@ -164,12 +218,12 @@
 % choices will have a checkbox in front of them instead of a letter choice.
 % For example,
 % \begin{example}
-% \question How many answer choices does this question have?
-% \oneparcheckboxesScrambled{One}{Two}{Three}{Four}{Five}
+% \textbackslash question How many answer choices does this question have? \textbackslash \textbackslash \\
+% \textbackslash oneparcheckboxesScrambled\{One\}\{Two\}\{Three\}\{Four\}\{Five\}
 % \end{example}
 % \begin{exampleDisplay}
 % \begin{questions}
-% \question How many answer choices does this question have?
+% \question How many answer choices does this question have? \\
 % \oneparcheckboxesScrambled{One}{Two}{Three}{Four}{Five}
 % \end{questions}
 % \end{exampleDisplay}
@@ -177,11 +231,14 @@
 
 % \StopEventually{}
 %
-%<*package> 
+%\iffalse
+%<*package>
+%\fi
 \makeatletter
-%</package> 
+%\iffalse
+%</package>
+%\fi
 %
-%<*package> 
 % 
 % \section{Implementation}
 % 
@@ -190,8 +247,11 @@
 % To accomodate instances when users don't wish to use the exam class, these
 % environments and macros are set up to allow use of the scramble choices
 % macros seamlessly.
-\@ifclassloaded{exam}{\def\er@c@exam{1} \def\here{here}}{\def\er@c@noexam{1} \def\here{no here}}
-
+%\iffalse
+%<*package>
+%\fi
+% \begin{macro}{\specialenvironments}
+%    \begin{macrocode}
 \ifx\er@c@noexam\undefined
 %    \end{macrocode}
 % Definitions for when the user is using the exam class.
@@ -211,12 +271,11 @@
 \DeclareRobustCommand{\er@choice}{\choice}
 \DeclareRobustCommand{\er@CorrectChoice}{\CorrectChoice}
 \else
-%
 %    \end{macrocode}
 % Definitions for when the user is NOT using the exam class.
 %    \begin{macrocode}
 \RequirePackage{amssymb}
-\RequirePackage{enumitem}
+\RequirePackage[inline]{enumitem}
 \newenvironment{EReChoices}%
 %    \end{macrocode}
 % When not in the exam class, for the choices environment, use the enumerate
@@ -252,14 +311,19 @@
 \DeclareRobustCommand{\er@CorrectChoice}{\item}
 \fi
 %    \end{macrocode}
-%</package> 
+%\end{macro}
+%\iffalse
+%</package>
+%\fi
 
 %
 % \subsection{The worker}
 %
 % The worker |\er@ScrambledChoicesWorker| does the actual work of scrambling
 % the answers.
+%\iffalse
 %<*package>
+%\fi
 %\begin{macro}{\er@getEanswer}
 %    \begin{macrocode}
 \newcommand{\er@ScrambledChoicesWorker}[5]{ {%
@@ -500,9 +564,13 @@
 }
 %    \end{macrocode}
 % \end{macro}
+%\iffalse
 %</package>
+%\fi
 %
+%\iffalse
 %<*package>
+%\fi
 %\begin{macro}{\er@getEanswer}
 % The |\er@getEanswer| macro gobbles up a fifth answer choice and calls the
 % scrambled choices worker.
@@ -511,9 +579,13 @@
  \er@ScrambledChoicesWorker{\er@Answer}{\er@ChoiceB}{\er@ChoiceC}{\er@ChoiceD}{\er@ChoiceE}}
 %    \end{macrocode}
 % \end{macro}
+%\iffalse
 %</package>
+%\fi
 %
+%\iffalse
 %<*package>
+%\fi
 %\begin{macro}{\er@getDanswer}
 % The |\er@getDanswer| macro gobbles up a fourth answer choice and checks to see
 % if a fifth answer is provided. If not, it calls the scrambled choice worker
@@ -524,9 +596,13 @@
  \er@ScrambledChoicesWorker{\er@Answer}{\er@ChoiceB}{\er@ChoiceC}{\er@ChoiceD}{}}}
 %    \end{macrocode}
 % \end{macro}
+%\iffalse
 %</package>
+%\fi
 %
+%\iffalse
 %<*package>
+%\fi
 %\begin{macro}{\er@getCanswer}
 % The |\er@getCanswer| macro gobbles up a third answer choice and checks to see
 % if a fourth answer is provided. If not, it calls the scrambled choice worker
@@ -537,9 +613,13 @@
 \er@ScrambledChoicesWorker{\er@Answer}{\er@ChoiceB}{\er@ChoiceC}{}{}}}
 %    \end{macrocode}
 % \end{macro}
+%\iffalse
 %</package>
+%\fi
 %
+%\iffalse
 %<*package>
+%\fi
 %\begin{macro}{\choicesScrambled}
 % The |\choicesScrambled| macro is the main macro for users. It can be called
 % with two or more answers. If more than two is provided, |\er@getCanswer| will
@@ -555,10 +635,14 @@
 }
 %    \end{macrocode}
 % \end{macro}
+%\iffalse
 %</package>
+%\fi
 %
 
+%\iffalse
 %<*package>
+%\fi
 %\begin{macro}{\checkboxesScrambled}
 % The |\checkboxesScrambled| macro is identical to the |\choicesScrambled| 
 % macro, except that is dispays checkboxes instead of letters for the choices.
@@ -572,10 +656,14 @@
 }
 %    \end{macrocode}
 % \end{macro}
+%\iffalse
 %</package>
+%\fi
 %
 
+%\iffalse
 %<*package>
+%\fi
 %\begin{macro}{\choicesScrambled}
 % The |\choicesScrambled| macro is the main macro for users. It can be called
 % with two or more answers. If more than two is provided, |\er@getCanswer| will
@@ -591,10 +679,14 @@
 }
 %    \end{macrocode}
 % \end{macro}
+%\iffalse
 %</package>
+%\fi
 %
 
+%\iffalse
 %<*package>
+%\fi
 %\begin{macro}{\oneparcheckboxesScrambled}
 % The |\oneparcheckboxesScrambled| macro is identical to the 
 % |\oneparchoicesScrambled| macro, except that is dispays checkboxes 
@@ -609,12 +701,18 @@
 }
 %    \end{macrocode}
 % \end{macro}
+%\iffalse
 %</package>
+%\fi
 %
 
-%<*package> 
+%\iffalse
+%<*package>
+%\fi
 \makeatother
-%</package> 
+%\iffalse
+%</package>
+%\fi
 
 
-\endinput
+%Finale
