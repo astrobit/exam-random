@@ -330,11 +330,11 @@
 % Here we create macros for each choice. 
 % These will be scrambled in the later sections.
 %    \begin{macrocode}
-\newcommand{\er@cAA}{\er@CorrectChoice #1}
-\newcommand{\er@cAB}{\er@choice #2}
-\newcommand{\er@cAC}{\er@choice #3}
-\newcommand{\er@cAD}{\er@choice #4}
-\newcommand{\er@cAE}{\er@choice #5}
+\def\er@cAA{\er@CorrectChoice #1}
+\def\er@cAB{\er@choice #2}
+\def\er@cAC{\er@choice #3}
+\def\er@cAD{\er@choice #4}
+\def\er@cAE{\er@choice #5}
 %    \end{macrocode}
 % Define some tikz variables for facrotial digits.
 % These will be used to do the scrambling
@@ -403,47 +403,47 @@
 %    \end{macrocode}
 % Swap A $\leftrightarrow$ A
 %    \begin{macrocode}
-		\newcommand{\er@cBA}{\er@cAA}
-		\newcommand{\er@cBB}{\er@cAB}
-		\newcommand{\er@cBC}{\er@cAC}
-		\newcommand{\er@cBD}{\er@cAD}
-		\newcommand{\er@cBE}{\er@cAE}
+		\def\er@cBA{\er@cAA}
+		\def\er@cBB{\er@cAB}
+		\def\er@cBC{\er@cAC}
+		\def\er@cBD{\er@cAD}
+		\def\er@cBE{\er@cAE}
 	\or
 %    \end{macrocode}
 % Swap A $\leftrightarrow$ B
 %    \begin{macrocode}
-		\newcommand{\er@cBA}{\er@cAB}
-		\newcommand{\er@cBB}{\er@cAA}
-		\newcommand{\er@cBC}{\er@cAC}
-		\newcommand{\er@cBD}{\er@cAD}
-		\newcommand{\er@cBE}{\er@cAE}
+		\def\er@cBA{\er@cAB}
+		\def\er@cBB{\er@cAA}
+		\def\er@cBC{\er@cAC}
+		\def\er@cBD{\er@cAD}
+		\def\er@cBE{\er@cAE}
 	\or
 %    \end{macrocode}
 % Swap A $\leftrightarrow$ C
 %    \begin{macrocode}
-		\newcommand{\er@cBA}{\er@cAC}
-		\newcommand{\er@cBB}{\er@cAB}
-		\newcommand{\er@cBC}{\er@cAA}
-		\newcommand{\er@cBD}{\er@cAD}
-		\newcommand{\er@cBE}{\er@cAE}
+		\def\er@cBA{\er@cAC}
+		\def\er@cBB{\er@cAB}
+		\def\er@cBC{\er@cAA}
+		\def\er@cBD{\er@cAD}
+		\def\er@cBE{\er@cAE}
 	\or
 %    \end{macrocode}
 % Swap A $\leftrightarrow$ D
 %    \begin{macrocode}
-		\newcommand{\er@cBA}{\er@cAD}
-		\newcommand{\er@cBB}{\er@cAB}
-		\newcommand{\er@cBC}{\er@cAC}
-		\newcommand{\er@cBD}{\er@cAA}
-		\newcommand{\er@cBE}{\er@cAE}
+		\def\er@cBA{\er@cAD}
+		\def\er@cBB{\er@cAB}
+		\def\er@cBC{\er@cAC}
+		\def\er@cBD{\er@cAA}
+		\def\er@cBE{\er@cAE}
 	\else
 %    \end{macrocode}
 % Swap A $\leftrightarrow$ E
 %    \begin{macrocode}
-		\newcommand{\er@cBA}{\er@cAE}
-		\newcommand{\er@cBB}{\er@cAB}
-		\newcommand{\er@cBC}{\er@cAC}
-		\newcommand{\er@cBD}{\er@cAD}
-		\newcommand{\er@cBE}{\er@cAA}
+		\def\er@cBA{\er@cAE}
+		\def\er@cBB{\er@cAB}
+		\def\er@cBC{\er@cAC}
+		\def\er@cBD{\er@cAD}
+		\def\er@cBE{\er@cAA}
 	\fi
 %    \end{macrocode}
 % The second factorial digit identifies the next swap to do. This swap results
@@ -453,38 +453,38 @@
 %    \end{macrocode}
 % Swap B $\leftrightarrow$ B
 %    \begin{macrocode}
-		\newcommand{\er@cCA}{\er@cBA}
-		\newcommand{\er@cCB}{\er@cBB}
-		\newcommand{\er@cCC}{\er@cBC}
-		\newcommand{\er@cCD}{\er@cBD}
-		\newcommand{\er@cCE}{\er@cBE}
+		\def\er@cCA{\er@cBA}
+		\def\er@cCB{\er@cBB}
+		\def\er@cCC{\er@cBC}
+		\def\er@cCD{\er@cBD}
+		\def\er@cCE{\er@cBE}
 	\or
 %    \end{macrocode}
 % Swap B $\leftrightarrow$ C
 %    \begin{macrocode}
-		\newcommand{\er@cCA}{\er@cBA}
-		\newcommand{\er@cCB}{\er@cBC}
-		\newcommand{\er@cCC}{\er@cBB}
-		\newcommand{\er@cCD}{\er@cBD}
-		\newcommand{\er@cCE}{\er@cBE}
+		\def\er@cCA{\er@cBA}
+		\def\er@cCB{\er@cBC}
+		\def\er@cCC{\er@cBB}
+		\def\er@cCD{\er@cBD}
+		\def\er@cCE{\er@cBE}
 	\or
 %    \end{macrocode}
 % Swap B $\leftrightarrow$ D
 %    \begin{macrocode}
-		\newcommand{\er@cCA}{\er@cBA}
-		\newcommand{\er@cCB}{\er@cBD}
-		\newcommand{\er@cCC}{\er@cBC}
-		\newcommand{\er@cCD}{\er@cBB}
-		\newcommand{\er@cCE}{\er@cBE}
+		\def\er@cCA{\er@cBA}
+		\def\er@cCB{\er@cBD}
+		\def\er@cCC{\er@cBC}
+		\def\er@cCD{\er@cBB}
+		\def\er@cCE{\er@cBE}
 	\else
 %    \end{macrocode}
 % Swap B $\leftrightarrow$ E
 %    \begin{macrocode}
-		\newcommand{\er@cCA}{\er@cBA}
-		\newcommand{\er@cCB}{\er@cBE}
-		\newcommand{\er@cCC}{\er@cBC}
-		\newcommand{\er@cCD}{\er@cBD}
-		\newcommand{\er@cCE}{\er@cBB}
+		\def\er@cCA{\er@cBA}
+		\def\er@cCB{\er@cBE}
+		\def\er@cCC{\er@cBC}
+		\def\er@cCD{\er@cBD}
+		\def\er@cCE{\er@cBB}
 	\fi
 %    \end{macrocode}
 % The third factorial digit identifies the next swap to do. This swap results
@@ -494,48 +494,48 @@
 %    \end{macrocode}
 % Swap C $\leftrightarrow$ C
 %    \begin{macrocode}
-		\newcommand{\er@cDA}{\er@cCA}
-		\newcommand{\er@cDB}{\er@cCB}
-		\newcommand{\er@cDC}{\er@cCC}
-		\newcommand{\er@cDD}{\er@cCD}
-		\newcommand{\er@cDE}{\er@cCE}
+		\def\er@cDA{\er@cCA}
+		\def\er@cDB{\er@cCB}
+		\def\er@cDC{\er@cCC}
+		\def\er@cDD{\er@cCD}
+		\def\er@cDE{\er@cCE}
 	\or
 %    \end{macrocode}
 % Swap C $\leftrightarrow$ D
 %    \begin{macrocode}
-		\newcommand{\er@cDA}{\er@cCA}
-		\newcommand{\er@cDB}{\er@cCB}
-		\newcommand{\er@cDC}{\er@cCD}
-		\newcommand{\er@cDD}{\er@cCC}
-		\newcommand{\er@cDE}{\er@cCE}
+		\def\er@cDA{\er@cCA}
+		\def\er@cDB{\er@cCB}
+		\def\er@cDC{\er@cCD}
+		\def\er@cDD{\er@cCC}
+		\def\er@cDE{\er@cCE}
 	\else
 %    \end{macrocode}
 % Swap C $\leftrightarrow$ E
 %    \begin{macrocode}
-		\newcommand{\er@cDA}{\er@cCA}
-		\newcommand{\er@cDB}{\er@cCB}
-		\newcommand{\er@cDC}{\er@cCE}
-		\newcommand{\er@cDD}{\er@cCD}
-		\newcommand{\er@cDE}{\er@cCC}
+		\def\er@cDA{\er@cCA}
+		\def\er@cDB{\er@cCB}
+		\def\er@cDC{\er@cCE}
+		\def\er@cDD{\er@cCD}
+		\def\er@cDE{\er@cCC}
 	\fi
 	\ifcase\fourthChoice
 %    \end{macrocode}
 % Swap D $\leftrightarrow$ D
 %    \begin{macrocode}
-		\newcommand{\er@cEA}{\er@cDA}
-		\newcommand{\er@cEB}{\er@cDB}
-		\newcommand{\er@cEC}{\er@cDC}
-		\newcommand{\er@cED}{\er@cDD}
-		\newcommand{\er@cEE}{\er@cDE}
+		\def\er@cEA{\er@cDA}
+		\def\er@cEB{\er@cDB}
+		\def\er@cEC{\er@cDC}
+		\def\er@cED{\er@cDD}
+		\def\er@cEE{\er@cDE}
 	\else
 %    \end{macrocode}
 % Swap D $\leftrightarrow$ E
 %    \begin{macrocode}
-		\newcommand{\er@cEA}{\er@cDA}
-		\newcommand{\er@cEB}{\er@cDB}
-		\newcommand{\er@cEC}{\er@cDC}
-		\newcommand{\er@cED}{\er@cDE}
-		\newcommand{\er@cEE}{\er@cDD}
+		\def\er@cEA{\er@cDA}
+		\def\er@cEB{\er@cDB}
+		\def\er@cEC{\er@cDC}
+		\def\er@cED{\er@cDE}
+		\def\er@cEE{\er@cDD}
 	\fi
 %    \end{macrocode}
 % Actually generate the choices based on the above swaps.
@@ -575,7 +575,7 @@
 % The |\er@getEanswer| macro gobbles up a fifth answer choice and calls the
 % scrambled choices worker.
 %    \begin{macrocode}
-\newcommand{\er@getEanswer}[1]{\newcommand{\er@ChoiceE}{#1}%
+\newcommand{\er@getEanswer}[1]{\def\er@ChoiceE{#1}%
  \er@ScrambledChoicesWorker{\er@Answer}{\er@ChoiceB}{\er@ChoiceC}{\er@ChoiceD}{\er@ChoiceE}}
 %    \end{macrocode}
 % \end{macro}
@@ -591,7 +591,7 @@
 % if a fifth answer is provided. If not, it calls the scrambled choice worker
 % with the four answers.
 %    \begin{macrocode}
-\newcommand{\er@getDanswer}[1]{\newcommand{\er@ChoiceD}{#1}%
+\newcommand{\er@getDanswer}[1]{\def\er@ChoiceD{#1}%
  \@ifnextchar\bgroup{ \er@getEanswer}{%
  \er@ScrambledChoicesWorker{\er@Answer}{\er@ChoiceB}{\er@ChoiceC}{\er@ChoiceD}{}}}
 %    \end{macrocode}
@@ -608,7 +608,7 @@
 % if a fourth answer is provided. If not, it calls the scrambled choice worker
 % with the three answers.
 %    \begin{macrocode}
-\newcommand{\er@getCanswer}[1]{\newcommand{\er@ChoiceC}{#1}%
+\newcommand{\er@getCanswer}[1]{\def\er@ChoiceC{#1}%
  \@ifnextchar\bgroup{ \er@getDanswer}{ %
 \er@ScrambledChoicesWorker{\er@Answer}{\er@ChoiceB}{\er@ChoiceC}{}{}}}
 %    \end{macrocode}
@@ -627,9 +627,9 @@
 % |\er@ScrambledChoicesWorker| is called with the two answers provided.
 %    \begin{macrocode}
 \newcommand{\choicesScrambled}[2]{%
-		\newcommand{\er@e@choiceEnvType}{EReChoices}%
-		\newcommand{\er@Answer}{#1}%
-		\newcommand{\er@ChoiceB}{#2}%
+		\def\er@e@choiceEnvType{EReChoices}%
+		\def\er@Answer{#1}%
+		\def\er@ChoiceB{#2}%
 		\@ifnextchar\bgroup{\er@getCanswer}{%
 \er@ScrambledChoicesWorker{\er@Answer}{\er@ChoiceB}{}{}{}}
 }
@@ -648,9 +648,9 @@
 % macro, except that is dispays checkboxes instead of letters for the choices.
 %    \begin{macrocode}
 \newcommand{\checkboxesScrambled}[2]{%
-		\newcommand{\er@e@choiceEnvType}{EReCheckboxes}%
-		\newcommand{\er@Answer}{#1}%
-		\newcommand{\er@ChoiceB}{#2}%
+		\def\er@e@choiceEnvType{EReCheckboxes}%
+		\def\er@Answer{#1}%
+		\def\er@ChoiceB{#2}%
 		\@ifnextchar\bgroup{\er@getCanswer}{%
 \er@ScrambledChoicesWorker{\er@Answer}{\er@ChoiceB}{}{}{}}
 }
@@ -671,9 +671,9 @@
 % |\er@ScrambledChoicesWorker| is called with the two answers provided.
 %    \begin{macrocode}
 \newcommand{\oneparchoicesScrambled}[2]{%
-		\newcommand{\er@e@choiceEnvType}{EReOneparchoices}%
-		\newcommand{\er@Answer}{#1}%
-		\newcommand{\er@ChoiceB}{#2}%
+		\def\er@e@choiceEnvType{EReOneparchoices}%
+		\def\er@Answer{#1}%
+		\def\er@ChoiceB{#2}%
 		\@ifnextchar\bgroup{\er@getCanswer}{%
 \er@ScrambledChoicesWorker{\er@Answer}{\er@ChoiceB}{}{}{}}
 }
@@ -693,9 +693,9 @@
 % instead of letters for the choices.
 %    \begin{macrocode}
 \newcommand{\oneparcheckboxesScrambled}[2]{%
-		\newcommand{\er@e@choiceEnvType}{EReOneparcheckboxes}%
-		\newcommand{\er@Answer}{#1}%
-		\newcommand{\er@ChoiceB}{#2}%
+		\def\er@e@choiceEnvType{EReOneparcheckboxes}%
+		\def\er@Answer{#1}%
+		\def\er@ChoiceB{#2}%
 		\@ifnextchar\bgroup{\er@getCanswer}{%
 \er@ScrambledChoicesWorker{\er@Answer}{\er@ChoiceB}{}{}{}}
 }
